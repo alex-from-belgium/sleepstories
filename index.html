@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Lullaby" />
+<meta name="theme-color" content="#0a0e1f" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<title>Lullaby — Bedtime Stories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night-deep: #070a17;
+    --night: #0a0e1f;
+    --night-soft: #111632;
+    --night-lift: #1a2048;
+    --moon: #f4e9d0;
+    --moon-dim: #d8cdb4;
+    --lamp: #f4a261;
+    --lamp-warm: #e76f51;
+    --star: #ffd89b;
+    --mist: rgba(244, 233, 208, 0.08);
+    --mist-strong: rgba(244, 233, 208, 0.16);
+    --ink: #e8e4d5;
+    --ink-dim: #9c9685;
+    --ink-faint: #5c5b52;
+    --danger: #d46a6a;
+    --success: #88b88a;
+    --radius: 18px;
+    --radius-lg: 26px;
+    --shadow-glow: 0 0 60px rgba(244, 162, 97, 0.15);
+    --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    background: var(--night);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  body {
+    background:
+      radial-gradient(ellipse at top, var(--night-soft) 0%, var(--night) 45%, var(--night-deep) 100%),
+      var(--night-deep);
+    background-attachment: fixed;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Starfield backdrop */
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .star-dot {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--moon);
+    border-radius: 50%;
+    opacity: 0.4;
+    animation: twinkle 4s infinite ease-in-out;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.3); }
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 520px;
+    margin: 0 auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ============================================
+     HEADER
+     ============================================ */
+  header {
+    padding: 28px 24px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+    position: relative;
+  }
+
+  .brand-mark svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 8px rgba(244, 162, 97, 0.4));
+  }
+
+  .brand-text {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    color: var(--moon);
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--mist);
+    background: var(--mist);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+  }
+  .icon-btn:active { transform: scale(0.94); }
+  .icon-btn:hover { background: var(--mist-strong); }
+  .icon-btn svg { width: 18px; height: 18px; }
+
+  /* ============================================
+     LOGIN SCREEN
+     ============================================ */
+  .login-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+    text-align: center;
+    animation: fadeUp 0.8s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .moon-illustration {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 32px;
+    position: relative;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .login-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 44px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--moon);
+    margin-bottom: 14px;
+  }
+
+  .login-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--lamp);
+  }
+
+  .login-subtitle {
+    font-size: 15px;
+    color: var(--ink-dim);
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 320px;
+  }
+
+  .login-form {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  /* ============================================
+     FORMS & INPUTS
+     ============================================ */
+  .field {
+    margin-bottom: 18px;
+    text-align: left;
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-dim);
+    margin-bottom: 8px;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--mist);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    color: var(--ink);
+    font-size: 16px;
+    font-family: inherit;
+    transition: var(--transition);
+    -webkit-appearance: none;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--lamp);
+    background: var(--mist-strong);
+    box-shadow: 0 0 0 4px rgba(244, 162, 97, 0.1);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--ink-faint);
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+
+  select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239c9685' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 44px;
+  }
+
+  /* ============================================
+     BUTTONS
+     ============================================ */
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 16px 24px;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn:not(:disabled):active {
+    transform: scale(0.98);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--lamp) 0%, var(--lamp-warm) 100%);
+    color: #2a1810;
+    font-weight: 600;
+    box-shadow: var(--shadow-glow);
+  }
+  .btn-primary:not(:disabled):hover {
+    box-shadow: 0 0 80px rgba(244, 162, 97, 0.3);
+  }
+
+  .btn-ghost {
+    background: var(--mist);
+    color: var(--ink);
+    border: 1px solid var(--mist-strong);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background: var(--mist-strong);
+  }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid rgba(212, 106, 106, 0.3);
+  }
+
+  /* ============================================
+     MAIN SCREENS
+     ============================================ */
+  .screen {
+    flex: 1;
+    padding: 0 24px 100px;
+    animation: fadeIn 0.5s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .screen-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 36px;
+    line-height: 1.1;
+    color: var(--moon);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .screen-title em { font-style: italic; color: var(--lamp); font-weight: 400; }
+
+  .screen-subtitle {
+    font-size: 14px;
+    color: var(--ink-dim);
+    margin-bottom: 32px;
+    line-height: 1.5;
+  }
+
+  /* ============================================
+     CREATE STORY FORM
+     ============================================ */
+  .create-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .length-pills {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .pill {
+    padding: 12px 8px;
+    background: var(--mist);
+    border: 1px solid transparent;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--ink-dim);
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+  }
+  .pill.active {
+    background: var(--mist-strong);
+    border-color: var(--lamp);
+    color: var(--moon);
+  }
+  .pill-label {
+    display: block;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--moon);
+    margin-bottom: 2px;
+  }
+  .pill.active .pill-label { color: var(--lamp); }
+  .pill-sub { font-size: 11px; opacity: 0.7; }
+
+  .provider-toggle {
+    display: flex;
+    gap: 8px;
+    padding: 4px;
+    background: var(--mist);
+    border-radius: 14px;
+  }
+  .provider-option {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    color: var(--ink-dim);
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .provider-option.active {
+    background: var(--night-lift);
+    color: var(--moon);
+  }
+
+  .cost-hint {
+    font-size: 12px;
+    color: var(--ink-faint);
+    text-align: center;
+    padding: 8px;
+  }
+
+  /* ============================================
+     GENERATION / LOADING
+     ============================================ */
+  .generating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    text-align: center;
+  }
+
+  .moon-spinner {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+  .moon-spinner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--mist);
+    border-top-color: var(--lamp);
+    animation: spin 1.5s linear infinite;
+  }
+  .moon-spinner::after {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, var(--moon) 0%, var(--moon-dim) 100%);
+    box-shadow: 0 0 30px rgba(244, 233, 208, 0.3);
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .generating-text {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--moon);
+    margin-bottom: 8px;
+  }
+  .generating-step {
+    font-size: 13px;
+    color: var(--ink-dim);
+    letter-spacing: 0.02em;
+  }
+
+  /* ============================================
+     STORY LIBRARY
+     ============================================ */
+  .library {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .story-card {
+    background: var(--mist);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    padding: 18px;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .story-card:hover {
+    background: var(--mist-strong);
+    border-color: var(--mist-strong);
+  }
+  .story-card:active { transform: scale(0.99); }
+
+  .story-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--lamp);
+    opacity: 0;
+    transition: var(--transition);
+  }
+  .story-card:hover::before { opacity: 1; }
+
+  .story-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 8px;
+    gap: 12px;
+  }
+
+  .story-recipient {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--lamp);
+    letter-spacing: 0.02em;
+  }
+
+  .story-date {
+    font-size: 11px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+
+  .story-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--moon);
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+
+  .story-preview {
+    font-size: 13px;
+    color: var(--ink-dim);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--ink-dim);
+  }
+  .empty-state svg {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 20px;
+    opacity: 0.4;
+  }
+  .empty-state p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ============================================
+     STORY PLAYER
+     ============================================ */
+  .player-screen {
+    min-height: calc(100vh - 120px);
+    min-height: calc(100dvh - 120px);
+    display: flex;
+    flex-direction: column;
+    padding: 0 24px 40px;
+  }
+
+  .player-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    background: transparent;
+    border: none;
+    color: var(--ink-dim);
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+
+  .player-header {
+    margin-bottom: 28px;
+  }
+
+  .player-recipient {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--lamp);
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .player-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 30px;
+    line-height: 1.15;
+    color: var(--moon);
+    letter-spacing: -0.01em;
+  }
+
+  .audio-player {
+    background: linear-gradient(135deg, var(--night-soft) 0%, var(--night-lift) 100%);
+    border: 1px solid var(--mist);
+    border-radius: var(--radius-lg);
+    padding: 28px 24px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .audio-player::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(244, 162, 97, 0.08) 0%, transparent 50%);
+    animation: breathe 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 1; }
+  }
+
+  .waveform {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    height: 44px;
+    margin-bottom: 22px;
+    position: relative;
+    z-index: 1;
+  }
+  .bar {
+    flex: 1;
+    max-width: 4px;
+    background: var(--mist-strong);
+    border-radius: 2px;
+    transition: height 0.1s ease;
+  }
+  .bar.active { background: var(--lamp); }
+  .bar.playing { animation: pulse-bar 0.8s ease-in-out infinite; }
+  @keyframes pulse-bar {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--ink-dim);
+    margin-bottom: 20px;
+    font-variant-numeric: tabular-nums;
+    position: relative;
+    z-index: 1;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: var(--mist);
+    border-radius: 2px;
+    margin-bottom: 24px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--lamp), var(--moon));
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  .player-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .control-btn {
+    background: transparent;
+    border: none;
+    color: var(--moon);
+    cursor: pointer;
+    padding: 8px;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .control-btn:active { transform: scale(0.9); }
+  .control-btn svg { width: 22px; height: 22px; }
+
+  .play-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--lamp) 0%, var(--lamp-warm) 100%);
+    color: #2a1810;
+    box-shadow: 0 0 40px rgba(244, 162, 97, 0.3);
+  }
+  .play-btn svg { width: 26px; height: 26px; }
+
+  .story-text-block {
+    background: var(--mist);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 20px;
+  }
+  .story-text-block h3 {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 16px;
+    color: var(--lamp);
+    margin-bottom: 14px;
+  }
+  .story-text-block p {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+    white-space: pre-wrap;
+  }
+
+  .player-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .player-actions .btn { flex: 1; }
+
+  /* ============================================
+     SETTINGS
+     ============================================ */
+  .settings-section {
+    background: var(--mist);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .settings-section h3 {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 17px;
+    color: var(--lamp);
+    margin-bottom: 4px;
+  }
+  .settings-section .section-desc {
+    font-size: 12px;
+    color: var(--ink-dim);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  .key-input-wrap {
+    position: relative;
+  }
+  .key-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--ink-dim);
+    cursor: pointer;
+    padding: 6px;
+  }
+
+  /* ============================================
+     MODAL / ALERTS
+     ============================================ */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 10, 23, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal {
+    background: var(--night-soft);
+    border: 1px solid var(--mist-strong);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    max-width: 400px;
+    width: 100%;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .modal h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--moon);
+    margin-bottom: 12px;
+  }
+  .modal p {
+    font-size: 14px;
+    color: var(--ink-dim);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .toast {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 16px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--night-lift);
+    border: 1px solid var(--mist-strong);
+    color: var(--moon);
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    z-index: 200;
+    animation: toastIn 0.3s ease;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  }
+  .toast.error { border-color: rgba(212, 106, 106, 0.4); color: var(--danger); }
+  .toast.success { border-color: rgba(136, 184, 138, 0.4); color: var(--success); }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translate(-50%, -10px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+
+  /* ============================================
+     BOTTOM NAV
+     ============================================ */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, var(--night-deep) 60%, transparent 100%);
+  }
+  .bottom-nav-inner {
+    max-width: 420px;
+    margin: 0 auto;
+    background: var(--night-lift);
+    border: 1px solid var(--mist);
+    border-radius: 22px;
+    padding: 6px;
+    display: flex;
+    gap: 4px;
+    backdrop-filter: blur(12px);
+  }
+  .nav-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 12px;
+    border-radius: 16px;
+    color: var(--ink-dim);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .nav-btn svg { width: 20px; height: 20px; }
+  .nav-btn.active {
+    background: var(--mist-strong);
+    color: var(--lamp);
+  }
+
+  .hidden { display: none !important; }
+
+  /* Small screens */
+  @media (max-width: 380px) {
+    .login-title { font-size: 36px; }
+    .screen-title { font-size: 30px; }
+    .length-pills { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Starfield -->
+<div class="stars" id="stars"></div>
+
+<div class="app">
+
+  <!-- ========== LOGIN SCREEN ========== -->
+  <div id="login-screen" class="login-screen">
+    <div class="moon-illustration">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="moonGrad" cx="35%" cy="35%">
+            <stop offset="0%" stop-color="#f9f0d8"/>
+            <stop offset="60%" stop-color="#e8dcb8"/>
+            <stop offset="100%" stop-color="#a89a74"/>
+          </radialGradient>
+          <filter id="moonGlow">
+            <feGaussianBlur stdDeviation="3"/>
+          </filter>
+        </defs>
+        <circle cx="60" cy="60" r="50" fill="url(#moonGrad)" filter="url(#moonGlow)" opacity="0.5"/>
+        <circle cx="60" cy="60" r="42" fill="url(#moonGrad)"/>
+        <circle cx="45" cy="52" r="3" fill="#a89a74" opacity="0.4"/>
+        <circle cx="72" cy="48" r="2" fill="#a89a74" opacity="0.4"/>
+        <circle cx="55" cy="72" r="4" fill="#a89a74" opacity="0.4"/>
+        <circle cx="75" cy="70" r="2.5" fill="#a89a74" opacity="0.4"/>
+      </svg>
+    </div>
+    <h1 class="login-title">Lullaby<br><em>for little dreamers</em></h1>
+    <p class="login-subtitle">A private home for bedtime stories, told in your own voice.</p>
+    <form class="login-form" id="login-form">
+      <div class="field">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="Shared family password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <span>Enter</span>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <p id="first-time-hint" class="cost-hint" style="margin-top: 16px;">
+        First time? Your password will be set on first login.
+      </p>
+    </form>
+  </div>
+
+  <!-- ========== MAIN APP ========== -->
+  <div id="main-app" class="hidden">
+
+    <header>
+      <div class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="logoMoon" cx="30%" cy="30%">
+                <stop offset="0%" stop-color="#f4a261"/>
+                <stop offset="100%" stop-color="#e76f51"/>
+              </radialGradient>
+            </defs>
+            <path d="M22 6 A 13 13 0 1 0 22 30 A 10 10 0 1 1 22 6 Z" fill="url(#logoMoon)"/>
+          </svg>
+        </div>
+        <span class="brand-text">Lullaby</span>
+      </div>
+      <button class="icon-btn" id="lock-btn" aria-label="Lock app">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="4" y="9" width="12" height="9" rx="2" stroke-linejoin="round"/>
+          <path d="M7 9V6a3 3 0 116 0v3" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- CREATE SCREEN -->
+    <div id="create-screen" class="screen">
+      <h2 class="screen-title">Tonight's <em>story</em></h2>
+      <p class="screen-subtitle">Tell me who it's for, what it's about, and how long. I'll write it, then it'll be read in your voice.</p>
+
+      <form class="create-form" id="create-form">
+
+        <div class="field">
+          <label for="recipient">Story for</label>
+          <input type="text" id="recipient" placeholder="e.g. Florium, Vincent, the little one" required>
+        </div>
+
+        <div class="field">
+          <label for="subject">About</label>
+          <textarea id="subject" placeholder="A dog and a cowboy on a hunt for gold. The moon and the stars lighting the world at night." required></textarea>
+        </div>
+
+        <div class="field">
+          <label>Length</label>
+          <div class="length-pills" id="length-pills">
+            <button type="button" class="pill" data-chars="2000">
+              <span class="pill-label">2k</span>
+              <span class="pill-sub">~2 min</span>
+            </button>
+            <button type="button" class="pill active" data-chars="4000">
+              <span class="pill-label">4k</span>
+              <span class="pill-sub">~4 min</span>
+            </button>
+            <button type="button" class="pill" data-chars="8000">
+              <span class="pill-label">8k</span>
+              <span class="pill-sub">~7 min</span>
+            </button>
+            <button type="button" class="pill" data-chars="12000">
+              <span class="pill-label">12k</span>
+              <span class="pill-sub">~10 min</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Story written by</label>
+          <div class="provider-toggle">
+            <button type="button" class="provider-option active" data-provider="openai">ChatGPT</button>
+            <button type="button" class="provider-option" data-provider="anthropic">Claude</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="generate-btn">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 2v3M10 15v3M4 10H2M18 10h-2M15.5 4.5l-1.5 1.5M6 14l-1.5 1.5M15.5 15.5L14 14M6 6L4.5 4.5" stroke-linecap="round"/>
+            <circle cx="10" cy="10" r="3" />
+          </svg>
+          <span>Weave the story</span>
+        </button>
+
+        <p class="cost-hint">
+          Uses your OpenAI/Claude API for the words, and ElevenLabs for the voice.
+        </p>
+      </form>
+    </div>
+
+    <!-- GENERATING SCREEN -->
+    <div id="generating-screen" class="screen hidden">
+      <div class="generating">
+        <div class="moon-spinner"></div>
+        <div class="generating-text" id="generating-text">Dreaming up a story…</div>
+        <div class="generating-step" id="generating-step">This may take a minute</div>
+      </div>
+    </div>
+
+    <!-- PLAYER SCREEN -->
+    <div id="player-screen" class="screen hidden">
+      <div class="player-screen">
+        <button class="player-back" id="back-from-player">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5l-5 5 5 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Library</span>
+        </button>
+
+        <div class="player-header">
+          <div class="player-recipient" id="player-recipient">For someone special</div>
+          <h2 class="player-title" id="player-title">A story</h2>
+        </div>
+
+        <div class="audio-player">
+          <div class="waveform" id="waveform"></div>
+          <div class="progress-row">
+            <span id="current-time">0:00</span>
+            <span id="total-time">0:00</span>
+          </div>
+          <div class="progress-track" id="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <div class="player-controls">
+            <button class="control-btn" id="rewind-btn" aria-label="Rewind 15 seconds">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12a9 9 0 109-9M3 12l3-3M3 12l3 3" stroke-linecap="round" stroke-linejoin="round"/>
+                <text x="8" y="17" font-size="7" font-weight="600" fill="currentColor" stroke="none" font-family="Inter">15</text>
+              </svg>
+            </button>
+            <button class="control-btn play-btn" id="play-btn" aria-label="Play">
+              <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5l12 7.5-12 7.5z"/></svg>
+              <svg id="pause-icon" class="hidden" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+            </button>
+            <button class="control-btn" id="forward-btn" aria-label="Forward 15 seconds">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12a9 9 0 11-9-9M21 12l-3-3M21 12l-3 3" stroke-linecap="round" stroke-linejoin="round"/>
+                <text x="8" y="17" font-size="7" font-weight="600" fill="currentColor" stroke="none" font-family="Inter">15</text>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <audio id="audio-el" preload="metadata"></audio>
+
+        <div class="player-actions">
+          <button class="btn btn-ghost" id="download-btn">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3v11m0 0l-4-4m4 4l4-4M4 17h12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Download audio</span>
+          </button>
+          <button class="btn btn-danger" id="delete-btn" aria-label="Delete story">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h12M8 6V4h4v2M6 6l1 11h6l1-11" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <div class="story-text-block">
+          <h3>The story</h3>
+          <p id="story-text">Loading…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIBRARY SCREEN -->
+    <div id="library-screen" class="screen hidden">
+      <h2 class="screen-title">Your <em>library</em></h2>
+      <p class="screen-subtitle">All the stories you've woven so far.</p>
+      <div class="library" id="library-list"></div>
+    </div>
+
+    <!-- SETTINGS SCREEN -->
+    <div id="settings-screen" class="screen hidden">
+      <h2 class="screen-title"><em>Settings</em></h2>
+      <p class="screen-subtitle">Your keys live only on this device. They never leave your phone except to call the APIs directly.</p>
+
+      <div class="settings-section">
+        <h3>ElevenLabs</h3>
+        <p class="section-desc">Your voice clone and API key.</p>
+        <div class="field">
+          <label for="el-key">API Key</label>
+          <div class="key-input-wrap">
+            <input type="password" id="el-key" placeholder="sk_...">
+            <button type="button" class="key-toggle" data-target="el-key" aria-label="Show/hide">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 10s3-6 9-6 9 6 9 6-3 6-9 6-9-6-9-6z"/><circle cx="10" cy="10" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="el-voice">Voice ID</label>
+          <input type="text" id="el-voice" placeholder="e.g. 42xgKaeATtWRPTmYPyGQ">
+        </div>
+        <div class="field">
+          <label for="el-model">Voice Model</label>
+          <select id="el-model">
+            <option value="eleven_multilingual_v2">Multilingual v2 (best for non-English)</option>
+            <option value="eleven_v3">v3 (newest, most expressive)</option>
+            <option value="eleven_turbo_v2_5">Turbo v2.5 (fast, cheaper)</option>
+            <option value="eleven_flash_v2_5">Flash v2.5 (fastest)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>OpenAI (ChatGPT)</h3>
+        <p class="section-desc">For writing stories in ChatGPT's voice.</p>
+        <div class="field">
+          <label for="oa-key">API Key</label>
+          <div class="key-input-wrap">
+            <input type="password" id="oa-key" placeholder="sk-...">
+            <button type="button" class="key-toggle" data-target="oa-key" aria-label="Show/hide">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 10s3-6 9-6 9 6 9 6-3 6-9 6-9-6-9-6z"/><circle cx="10" cy="10" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="oa-model">Model</label>
+          <select id="oa-model">
+            <option value="gpt-4o">GPT-4o (recommended)</option>
+            <option value="gpt-4o-mini">GPT-4o mini (cheaper)</option>
+            <option value="gpt-4-turbo">GPT-4 Turbo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Anthropic (Claude)</h3>
+        <p class="section-desc">Optional — only if you want to use Claude sometimes.</p>
+        <div class="field">
+          <label for="an-key">API Key</label>
+          <div class="key-input-wrap">
+            <input type="password" id="an-key" placeholder="sk-ant-...">
+            <button type="button" class="key-toggle" data-target="an-key" aria-label="Show/hide">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 10s3-6 9-6 9 6 9 6-3 6-9 6-9-6-9-6z"/><circle cx="10" cy="10" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Password</h3>
+        <p class="section-desc">Change the family login password.</p>
+        <div class="field">
+          <input type="password" id="new-password" placeholder="New password">
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="save-settings">Save settings</button>
+      <div style="height: 16px;"></div>
+      <button class="btn btn-danger" id="wipe-btn">Wipe everything on this device</button>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav" id="bottom-nav">
+      <div class="bottom-nav-inner">
+        <button class="nav-btn active" data-screen="create-screen">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 4v12M4 10h12" stroke-linecap="round"/></svg>
+          <span>Create</span>
+        </button>
+        <button class="nav-btn" data-screen="library-screen">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h12v12H4z" stroke-linejoin="round"/><path d="M8 4v12M12 4v12" /></svg>
+          <span>Library</span>
+        </button>
+        <button class="nav-btn" data-screen="settings-screen">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="2.5"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2M5 5l1.5 1.5M13.5 13.5L15 15M5 15l1.5-1.5M13.5 6.5L15 5" stroke-linecap="round"/></svg>
+          <span>Settings</span>
+        </button>
+      </div>
+    </nav>
+
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
